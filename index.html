@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo de Lanzarote</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        h1 {
+            margin: 20px;
+            text-align: center;
+        }
+
+        #sidebar {
+            width: 25%;
+            padding: 20px;
+            background-color: #f4f4f4;
+            box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        #map {
+            width: 75%;
+            height: 100vh;
+        }
+
+        .location {
+            margin: 10px 0;
+            cursor: pointer;
+            padding: 5px;
+            background-color: #eaeaea;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .location:hover {
+            background-color: #ddd;
+        }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <div id="sidebar">
+        <h1>Mapa Interactivo de Lanzarote</h1>
+        <div id="locations"></div>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inicializar el mapa centrado en Lanzarote
+            var map = L.map('map').setView([29.0469, -13.5899], 10);
+
+            // Cargar y mostrar el mapa desde OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+            }).addTo(map);
+
+            // Icono personalizado para la casa
+            var houseIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/69/69524.png', // Icono de ejemplo (puedes reemplazarlo)
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32],
+            });
+
+            // Añadir el marcador de la casa
+            var casaMarker = L.marker([28.96763988628905, -13.55922613023181], { icon: houseIcon })
+                .addTo(map)
+                .bindPopup("<b>Tu Casa</b>")
+                .openPopup();
+
+            // Puntos de interés
+            var puntosDeInteres = [
+                { nombre: "Timanfaya", coordenadas: [29.0316, -13.7244] },
+                { nombre: "Cueva de los Verdes", coordenadas: [29.1563, -13.4316] },
+                { nombre: "Jardín de Cactus", coordenadas: [29.0883, -13.4802] },
+                { nombre: "Caleta de Famara", coordenadas: [29.11615676785601, -13.562533254123267]},
+                { nombre: "Haria", coordenadas: [29.146947494277036, -13.497854523047954]},
+                { nombre: "Jameos del Agua", coordenadas: [29.157578000243664, -13.432142126523459]},
+                { nombre: "Mirador del Rio", coordenadas: [29.214567277065683, -13.481181280453567]},
+                { nombre: "Volcan del Cuervo", coordenadas: [28.992800093094992, -13.691825235683904]},
+                { nombre: "Mirador de Aviones", coordenadas: [28.935021157610695, -13.611619897264305]},
+                { nombre: "Grietas", coordenadas: [28.973464087193012, -13.637116142983764]},
+                { nombre: "Hervideros y Vermeja", coordenadas: [28.953887447273374, -13.833539702774704]},
+                { nombre: "Playa Volcanica Tenesar", coordenadas: [29.081765450444383, -13.717009720449393]},
+                { nombre: "Playa del Papagayo", coordenadas: [28.843619031309046, -13.788029716598025]},
+                { nombre: "Piscinas Naturales Charcones", coordenadas: [28.89104452766424, -13.871649631871248]},
+                { nombre: "Vinos Geria", coordenadas: [28.967095435302614, -13.713588242728886]},
+                { nombre: "Ciudad estratificada", coordenadas: [29.057813599585323, -13.504973853200173]},
+                { nombre: "Teguise", coordenadas: [29.060290953581465, -13.560628907911413]},
+                { nombre: "Puerto del Carmen", coordenadas: [28.92254248948651, -13.668735253980424]},
+                
+            ];
+
+            // Crear los marcadores y el listado lateral
+            var locationsDiv = document.getElementById('locations');
+            puntosDeInteres.forEach(function(punto, index) {
+                // Crear marcador en el mapa
+                var marker = L.marker(punto.coordenadas).addTo(map)
+                    .bindPopup(`<b>${punto.nombre}</b>`);
+                
+                // Crear elemento en la lista lateral
+                var locationItem = document.createElement('div');
+                locationItem.className = 'location';
+                locationItem.textContent = punto.nombre;
+                locationItem.dataset.index = index;
+
+                // Al hacer clic en el elemento de la lista, centrar el mapa en el marcador
+                locationItem.addEventListener('click', function() {
+                    map.setView(punto.coordenadas, 14);
+                    marker.openPopup();
+                });
+
+                locationsDiv.appendChild(locationItem);
+            });
+        });
+    </script>
+</body>
+</html>
